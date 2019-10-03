@@ -29,7 +29,7 @@ if mod(num_of_rob,2) == 0
             T2(i,j) = targ_coor(num_of_rob+i,j);
         end
     end
-    numRob = num_of_rob;
+    numRob = [num_of_rob, num_of_rob];
 else
 %     disp('количество роботов нечётное');
     num_of_rob_n = ceil(num_of_rob/2);
@@ -46,7 +46,7 @@ else
             T2(i,j) = targ_coor(i+num_of_rob_n,j);   
         end
     end
-    numRob = num_of_rob_n;
+    numRob = [num_of_rob_n, rez];
 end
 end
 
