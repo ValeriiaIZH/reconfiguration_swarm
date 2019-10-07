@@ -1,9 +1,10 @@
 % первая сборка всех частей алгоритма
+% БЕЗ ГРАФИКОВ
 clc; 
 close all;
 clearvars;
 % ввод количества роботов с консоли
-disp('Введенное количество роботов = активному числу роботов!');
+%% disp('Введенное количество роботов = активному числу роботов!');
 num_of_robots = input('Введите количество роботов num = ');
 % koef = input('Ввод коэффициента увеличения времени задержки  koef = ');
 koef = 0.5;
@@ -14,7 +15,7 @@ if location == 1
     location_mode = 1;
 else
     location_mode = location;
-    disp('Роботы вне поверхности');
+    %% disp('Роботы вне поверхности');
 end
 all_calculated_time = 0;
 tic
@@ -61,10 +62,10 @@ clear row;
 [ TargetAll, TargetPeak , TargetEdge ] = ...
                                          generate_targets_flat(Peak, Edge);                                                                       
 % графики                                     
-plot(robot_coordinates(:,1), robot_coordinates(:,2), 'om');
-hold on;
-grid on;
-plotSurface( Peak, Edge, TargetAll )
+% plot(robot_coordinates(:,1), robot_coordinates(:,2), 'om');
+% hold on;
+% grid on;
+% plotSurface( Peak, Edge, TargetAll )
 % проверка корректности радиуса и плотности размещения
 if R > 1 
     disp('Радиус некорректен, R = 1');
@@ -119,8 +120,8 @@ if num_of_algorithm == 1
                                               TargetAll, new_x_2, new_y_2);
              ActiveDist = [ActiveDist, ActiveDist0, ActiveDist1, ActiveDist2];                            
         else
-            disp('Коллизия между роботами после гомотетии:');
-            disp(CollidedRobotsNum1);
+            %% disp('Коллизия между роботами после гомотетии:');
+            %% disp(CollidedRobotsNum1);
             disp('Следует применить Алгоритм №2!');
             [ActiveDist] = algorithm_2(Peak, Edge,num_of_robots, new_rob_cor, TargetAll, PathKor0,...
                      CollidedRobotsNum0);

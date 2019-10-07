@@ -19,6 +19,8 @@ function [ActiveDist] = algorithm_2(Peak, Edge, num_of_robots, new_rob_cor, Targ
 %         'FontName','Times New Roman Cyr','FontSize',10) % установили шрифт
 %         title(['\bfЦикл N' num2str(k1)]);
 %     end
+    else 
+       Cycles = []; 
     end
     if isempty(Cycles)
     disp('В графе коллизий нет циклов.');
