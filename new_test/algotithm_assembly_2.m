@@ -101,40 +101,40 @@ end
 if num_of_algorithm == 0
     disp(' ');
 end
-% if num_of_algorithm == 1
-%         [new_x_1_sd,  new_y_1_sd, ...
-%         new_x_2, new_y_2] = Homothetic_transformation(lambda,...
-%                       robot_coordinates, TargetAll, center, num_of_robots);
-%         ActiveDist1 = homothetic_move(num_of_robots, new_x_1_sd, new_y_1_sd, ...
-%                         robot_coordinates, new_x_2, new_y_2);
-%         [PathKor1, PathTime1] = after_homothetic(new_x_2, new_y_2,... 
-%                                 num_of_robots, new_x_1_sd, new_y_1_sd);
-%         % проверка на коллизии
-%         [CollidedRobotsNum1,...
-%             CollidedRobotsKor1, dist1] = my_collisiontest(PathKor1, PathTime1);
-%         if isempty(CollidedRobotsNum1)
-%             disp('Алгоритм №1 работает!');
-%             [PathKor2, PathTime2, ActiveRobots, ActiveDist2] = last_path(num_of_robots,...
-%                                               TargetAll, new_x_2, new_y_2);
-%              ActiveDist = [ActiveDist, ActiveDist0, ActiveDist1, ActiveDist2];                            
-%         else
-%             disp('Коллизия между роботами после гомотетии:');
-%             disp(CollidedRobotsNum1);
-%             disp('Следует применить Алгоритм №2!');
-%             [ActiveDist] = algorithm_2(Peak, Edge,num_of_robots, new_rob_cor, TargetAll, PathKor0,...
-%                      CollidedRobotsNum0);
-%         end
-% end
-% if num_of_algorithm == 2 
-%      disp('Следует применить Алгоритм №2!');
-%     [ActiveDist] = algorithm_2(Peak, Edge,num_of_robots, new_rob_cor, TargetAll, PathKor0,...
-%                   CollidedRobotsNum0);
-% end
-% time = toc;
-% all_calculated_time = all_calculated_time + time;
-% msg = sprintf('Общее время вычислений t = %6.4g', all_calculated_time); 
-% disp(msg);
-% % сумма длин перемещений активных роботов
-% sum_dist = sum(ActiveDist);
-% msg = sprintf('Сумма длин перемещений активных роботов L = %.3f', sum_dist);
-% disp(msg);
+if num_of_algorithm == 1
+        [new_x_1_sd,  new_y_1_sd, ...
+        new_x_2, new_y_2] = Homothetic_transformation(lambda,...
+                      robot_coordinates, TargetAll, center, num_of_robots);
+        ActiveDist1 = homothetic_move(num_of_robots, new_x_1_sd, new_y_1_sd, ...
+                        robot_coordinates, new_x_2, new_y_2);
+        [PathKor1, PathTime1] = after_homothetic(new_x_2, new_y_2,... 
+                                num_of_robots, new_x_1_sd, new_y_1_sd);
+        % проверка на коллизии
+        [CollidedRobotsNum1,...
+            CollidedRobotsKor1, dist1] = my_collisiontest(PathKor1, PathTime1);
+        if isempty(CollidedRobotsNum1)
+            disp('Алгоритм №1 работает!');
+            [PathKor2, PathTime2, ActiveRobots, ActiveDist2] = last_path(num_of_robots,...
+                                              TargetAll, new_x_2, new_y_2);
+             ActiveDist = [ActiveDist, ActiveDist0, ActiveDist1, ActiveDist2];                            
+        else
+            disp('Коллизия между роботами после гомотетии:');
+            disp(CollidedRobotsNum1);
+            disp('Следует применить Алгоритм №2!');
+            [ActiveDist] = algorithm_2(Peak, Edge,num_of_robots, new_rob_cor, TargetAll, PathKor0,...
+                     CollidedRobotsNum0);
+        end
+end
+if num_of_algorithm == 2 
+     disp('Следует применить Алгоритм №2!');
+    [ActiveDist] = algorithm_2(Peak, Edge,num_of_robots, new_rob_cor, TargetAll, PathKor0,...
+                  CollidedRobotsNum0);
+end
+time = toc;
+all_calculated_time = all_calculated_time + time;
+msg = sprintf('Общее время вычислений t = %6.4g', all_calculated_time); 
+disp(msg);
+% сумма длин перемещений активных роботов
+sum_dist = sum(ActiveDist);
+msg = sprintf('Сумма длин перемещений активных роботов L = %.3f', sum_dist);
+disp(msg);
