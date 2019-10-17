@@ -1,0 +1,49 @@
+clc;
+clearvars;
+close all;
+
+location_mode = input('Размещение роботов: 1-снаружи, иначе внутри = ');
+ROBOTNUM = input('Введите количество роботов: ROBOTNUM = ');
+maxPeak = input('Введите максимальную координату вершины: maxPeak = ');
+
+global MinDist Density R DELTAMIN FIN_EDGE;
+MinDist = 3;
+R = 1;              % радиус робота
+DELTAMIN = 4.3*R;   % минимальный шаг решетки
+FIN_EDGE = DELTAMIN*fix(sqrt((ROBOTNUM-2)/2)); % размер ребра поверхности
+Density = (fix(FIN_EDGE/DELTAMIN)+1)^2;
+
+%% поверхность КУБ
+S = [0,        0,        0;        ...  % S(1,:)
+     0,        0,        FIN_EDGE; ...  % S(2,:)
+     0,        FIN_EDGE, FIN_EDGE; ...  % S(3,:)
+     0,        FIN_EDGE, 0;        ...  % S(4,:)      
+     FIN_EDGE, FIN_EDGE, 0;        ...  % S(5,:)
+     FIN_EDGE, 0,        0;        ...  % S(6,:)
+     FIN_EDGE, 0,        FIN_EDGE; ...  % S(7,:)
+     FIN_EDGE, FIN_EDGE, FIN_EDGE];     % S(8,:)
+ 
+Robots = generateRobots(location_mode, ROBOTNUM, maxPeak);
+
+% проверка корректности
+if R > 1 
+    disp('Радиус некорректен, R = 1');
+    R = 1;
+end
+if Density > 4/(R^2)
+    disp('Плотность некорректна, Density = 4');
+    Density = 4;
+end
+Delta = DELTAMIN;
+M = fix(FIN_EDGE/Delta)+1;      % число точек в ряду
+TargetNum = 6*M^2-12*M+8;       % общее число таргетных точек
+n = 1;                          % счетчик таргетных точек
+% заполнение таргентрых точек
+TargetKor = SettingTargetCube(Delta, TargetNum);
+%%
+figure 
+plot3(Robots(:,1), Robots(:,2), Robots(:,3), 'o');
+grid on;
+hold on;
+plot3(S(:,1), S(:,2), S(:,3), 'ro');
+plot3(TargetKor(:,1),TargetKor(:,2),TargetKor(:,3), 'r*');
