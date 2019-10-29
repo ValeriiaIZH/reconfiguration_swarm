@@ -1,4 +1,4 @@
-function [RobotCorCenter, TargetCorCenter] = math_function(RobotCor, TargetCor)
+function [NewRobotCorCenter, NewRobotCor] = math_function(RobotCor, TargetCor)
 %% вычисление центра множеств и коэф. пр€мой
 % % определение центра первого множества
 % polyin_1 = polyshape(x_1, y_1);
@@ -39,6 +39,27 @@ z_c2 = s6/size(z_2,1);
 RobotCorCenter = [x_c1, y_c1, z_c1];
 TargetCorCenter = [x_c2, y_c2, z_c2];
 
+
+
+%% параллельный перенос
+% парметры направл€ющего вектора
+A = RobotCorCenter(:,1);
+B = TargetCorCenter(:,1);
+param_a1  = linsolve(A,B);
+clear A B;
+
+A = RobotCorCenter(:,2);
+B = TargetCorCenter(:,2);
+param_a2  = linsolve(A,B);
+clear A B;
+
+A = RobotCorCenter(:,3);
+B = TargetCorCenter(:,3);
+param_a3  = linsolve(A,B);
+clear A B;
+
+NewRobotCorCenter = TargetCorCenter;
+NewRobotCor = [param_a1.*RobotCor(:,1) param_a2.*RobotCor(:,2) param_a3.*RobotCor(:,3)];
 end
 % % расчЄт коэффициентов функции (пр€ма€ f(x)=k*x+b)
 % A = [x_c1 1; x_c2 1];
