@@ -1,13 +1,5 @@
-function [NewRobotCorCenter, NewRobotCor] = math_function(RobotCor, TargetCor)
-%% вычисление центра множеств и коэф. пр€мой
-% % определение центра первого множества
-% polyin_1 = polyshape(x_1, y_1);
-% polyout_1 = simplify(polyin_1);
-% [x_c1, y_c1] = centroid(polyout_1);
-% % определение центра второго множества
-% polyin_2 = polyshape(Peak);
-% polyout_2 = simplify(polyin_2);
-% [x_c2, y_c2] = centroid(polyout_2);
+function [NewRobotCorCenter, NewRobotCor, RobotCorCenter] = math_function(RobotCor, TargetCor)
+% вычисление центра множеств и коэф. пр€мой
 x_1 = RobotCor(:,1);
 y_1 = RobotCor(:,2);
 z_1 = RobotCor(:,3);
@@ -38,42 +30,15 @@ z_c2 = s6/size(z_2,1);
 
 RobotCorCenter = [x_c1, y_c1, z_c1];
 TargetCorCenter = [x_c2, y_c2, z_c2];
-
-
-
 %% параллельный перенос
 % парметры направл€ющего вектора
-A = RobotCorCenter(:,1);
-B = TargetCorCenter(:,1);
-param_a1  = linsolve(A,B);
-clear A B;
-
-A = RobotCorCenter(:,2);
-B = TargetCorCenter(:,2);
-param_a2  = linsolve(A,B);
-clear A B;
-
-A = RobotCorCenter(:,3);
-B = TargetCorCenter(:,3);
-param_a3  = linsolve(A,B);
-clear A B;
+param_a1  = TargetCorCenter(:,1)-RobotCorCenter(:,1);
+param_a2 = TargetCorCenter(:,2)- RobotCorCenter(:,2);
+param_a3  = TargetCorCenter(:,3)- RobotCorCenter(:,3);
 
 NewRobotCorCenter = TargetCorCenter;
-NewRobotCor = [param_a1.*RobotCor(:,1) param_a2.*RobotCor(:,2) param_a3.*RobotCor(:,3)];
+NewRobotCor = [param_a1+RobotCor(:,1) param_a2+RobotCor(:,2) param_a3+RobotCor(:,3)];
 end
-% % расчЄт коэффициентов функции (пр€ма€ f(x)=k*x+b)
-% A = [x_c1 1; x_c2 1];
-% B = [y_c1; y_c2];
-% K = linsolve(A, B);
-% clear n f(i) i A B;
-% % назначение новых координат дл€ роботов после параллельного переноса
-% x_c_new = x_c2;
-% y_c_new = K(1) * x_c_new + K(2);
-% a = x_c2-x_c1;
-% b = y_c2-y_c1;
-% x_1_sd = x_1 + a;
-% y_1_sd = y_1 + b;
-% clear A B
 % A = [x_1_sd; y_1_sd]';
 % B = [x_1; y_1]';
 % dist = pdist2(A, B);
