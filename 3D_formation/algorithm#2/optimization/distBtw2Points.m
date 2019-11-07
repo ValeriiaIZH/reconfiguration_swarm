@@ -1,6 +1,0 @@
-function Dist = distBtw2Points(A, B)
-% функция расчёта расстояния между двумя точками
-Dist = sqrt(...
-                (A(:, 1) - B(:, 1)).^2 + ... 
-                (A(:, 2) - B(:, 2)).^2 );
-Dist = roundn(Dist, -2);
