@@ -1,31 +1,30 @@
-% Алгоритм реконфигурации в трёхмерном пространстве
-%% ПЕРЕПИСАТЬ НА АНГЛИЙСКОМ !!!!
+% алгоритм в трёхмерном пространстве
+% для тестирования всяких фич
+
 clc;
 clearvars;
 close all;
 
-%% ДОДЕЛАТЬ !!!!
-% location_mode = input('Размещение роботов: 1-снаружи, иначе внутри = ');
-% ROBOTNUM = input('Введите количество роботов: ROBOTNUM = ');
-% maxPeak = input('Введите максимальную координату вершины: maxPeak = ');
-%%
 location_mode = 2;
 ROBOTNUM = 100; 
 maxPeak = 10;
 
-global MinDist Density R DELTAMIN FIN_EDGE MASHTAR MASHROB MINR VEL TIMESTEP;
+global MinDist Density R DELTAMIN S FIN_EDGE MASHTAR MASHROB VEL TIMESTEP MINR;
 R = 1;              % радиус робота
-MINR = R;           % минимальный радиус
-VEL = 1;            % скорость 
+MINR = R;
 MASHTAR = 5;        % размер таргентой точки на графике
 MASHROB = 5;        % размер робота на графике
 MinDist = 3*R;      % минимальное допустимое расстояние
 DELTAMIN = 4.3*R;   % минимальный шаг решетки
 FIN_EDGE = DELTAMIN*fix(sqrt((ROBOTNUM-2)/6)); % размер ребра поверхности
-Density = (fix(FIN_EDGE/DELTAMIN)+1)^2;        % плотность размещения таргентных точек
+Density = (fix(FIN_EDGE/DELTAMIN)+1)^2;     % плотность размещения таргентных точек
 % Density = 4;
-TIMESTEP = 2*R/VEL; % шаг дискретизации
-% поверхность КУБ
+VEL = 1;            % скорость робота
+TIMESTEP = 2*R/VEL; % шаг дискретизации по времени 
+                    % по умолчанию полагаем равным времени, 
+                    % за которое робот проходит
+                    % расстояние, равное своему диаметру
+%% поверхность КУБ
 S = [0,        0,        0;        ...  % S(1,:)
      0,        0,        FIN_EDGE; ...  % S(2,:)
      0,        FIN_EDGE, FIN_EDGE; ...  % S(3,:)
@@ -37,32 +36,23 @@ S = [0,        0,        0;        ...  % S(1,:)
  
 RobotCor = generateRobots(location_mode, ROBOTNUM, maxPeak);
 
-% % проверка корректности
-% if R > 1 
-%     disp('Радиус некорректен, R = 1');
-%     R = 1;
-% end
-% if Density > 4/(R^2)
-%     disp('Плотность некорректна, Density = 4');
-%     Density = 4;
-% end
-
 Delta = DELTAMIN;
 M = fix(FIN_EDGE/Delta)+1;      % число точек в ряду
 TargetNum = 6*M^2-12*M+8;       % общее число таргетных точек
-n = 1;                          % счетчик таргетных точек
+% n = 1;                          % счетчик таргетных точек
+
 % заполнение таргентрых точек
 TargetCor = SettingTargetCube(Delta, TargetNum);
 tic
 % расчёт центров и новых координат
 [NewRobotCorCenter, NewRobotCor, RobotCorCenter] = math_function(RobotCor, TargetCor);
 % паралллеьный перенос
-[PathKor0, PathTime0, RobotCor0,ActiveDist0] = parallelMove(RobotCor, NewRobotCor, TargetNum);
-% гомотетия
+[PathKor0, ~, RobotCor0] = parallelMove(RobotCor, NewRobotCor, TargetNum);
+% гомомтетия
 distantionAll = pdist2(NewRobotCor,RobotCor0);
 %расчёт лямбда для гомотетии
 lambda = calculate_lambda(distantionAll);
-% lambda = 2; % для проверки
+% lambda = 2;
 [homRobot, homTarget] = homotheticTransformation(lambda, NewRobotCor,...
                                    TargetCor, NewRobotCorCenter, ROBOTNUM);
                                % homRobot - координаты роботов после
@@ -74,7 +64,7 @@ lambda = calculate_lambda(distantionAll);
                                              % движение роботов от
                                              % смещенных коордит до
                                              % кооддинат гомотетии
-[PathKor2, PathTime2, ActiveDist2] = homRobMovehomTar(homRobot,homTarget);
+[PathKor2, PathTime2] = homRobMovehomTar(homRobot,homTarget);
                                             % движение роботов после
                                             % гомотетии к таргентным точкам
                                             % после гомотетии
@@ -86,32 +76,28 @@ lambda = calculate_lambda(distantionAll);
 [PathKor3, PathTime3, ActiveRobots3, ActiveDist3] = homTarMoveTar(homTarget, TargetCor);
                                              % движение роботов до целевых
                                              % точек
-%% ДОДЕЛАТЬ РАСЧЁТ !!!!
 % оценка параметров движения
 % сумма длин перемещений активных роботов
 time1 = toc;
-ActiveDist = [ActiveDist0; ActiveDist1; ActiveDist2; ActiveDist3];
-PathTime = [PathTime0; PathTime1; PathTime2; PathTime3];
-SumDist = sum(ActiveDist);
-msg = sprintf('Сумма длин перемещений активных роботов = %.3f', SumDist);
+SumDist = sum(ActiveDist3);
+msg = sprintf('Сумма длин перемещений активных роботов, SumDist = %.3f', SumDist);
 disp(msg);
 % время реконфигурации
-ReconfigurationTime = max(PathTime);
-msg = sprintf('Время реконфигурации = %.1f', ReconfigurationTime);
+ReconfigurationTime = max(PathTime1);
+msg = sprintf('Время реконфигурации, ReconfigurationTime = %.1f', ReconfigurationTime);
 disp(msg);
-disp('Роботы с коллизией : ');disp( CollidedRobotsNum);
+msg = sprintf('Роботы с коллизией : %.3f', CollidedRobotsNum);
+disp(msg);
 msg = sprintf('Время работы алгоритма = %.3f', time1);
 disp(msg);
 clear msg;
-%%
-
-% общий путь
+%% общий путь
 % allPath = zeros(?,3,size(ActiveRobots3,1));
 for i = 1:size(ActiveRobots3,1)
-    allPath(:,:,i) = [PathKor0(:,:,i); PathKor1(:,:,i);...
-                      PathKor2(:,:,i); PathKor3(:,:,i)];
+allPath(:,:,i) = [PathKor0(:,:,i); PathKor1(:,:,i);...
+                  PathKor2(:,:,i); PathKor3(:,:,i)];
 end
-%% отображение всего
+%% отрисовка всего
 % отображение поверхности
  PlottingSurface;
  axis([-80 80 -80 80 -80 80])
@@ -158,10 +144,7 @@ end
 % анимация движения роботов
 AnimatedMovement3(allPath);
 
-plotTraj(ActiveRobots3, allPath)
-
-
-% отрисовка сфер
+%% отрисовка сфер
 radSfery = 2*R;
 for i = 1:size(allPath,3)
     [X, Y, Z] = sphere(10);
@@ -171,3 +154,7 @@ for i = 1:size(allPath,3)
     shading interp;
     alpha .5;
 end
+
+
+
+

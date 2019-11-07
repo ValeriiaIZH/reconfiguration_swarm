@@ -11,10 +11,10 @@ else
 end
 RobotKor = NewRobotCor;
 ActiveDist = zeros(size(ActiveRobotsUnsort,1), 1);
-for i = 1:size(TargetKor,1)
+for i = 1:num
     TargetRast = zeros(1, size(RobotKor,1)); 
     distdist = zeros(1, size(RobotKor,1));
-    for j = 1:size(RobotKor,1)
+    for j = 1:num
             distdist(i,j)=pdist2(TargetKor(i,:), RobotKor(j,:));
         if i == j
             TargetRast(1, j) = distdist(i,j);
